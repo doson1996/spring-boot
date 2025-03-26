@@ -16,23 +16,8 @@
 
 package org.springframework.boot;
 
-import java.lang.reflect.Constructor;
-import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -82,6 +67,20 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.StandardServletEnvironment;
+
+import java.lang.reflect.Constructor;
+import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Class that can be used to bootstrap and launch a Spring application from a Java main
@@ -310,7 +309,7 @@ public class SpringApplication {
 		configureHeadlessProperty();
 		// 获取SpringBoot监听器，发布SpringBoot事件
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		// 发布SpringBoot开始启动时间
+		// 发布SpringBoot开始启动事件
 		listeners.starting();
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
@@ -319,17 +318,24 @@ public class SpringApplication {
 			configureIgnoreBeanInfo(environment);
 			// 打印banner
 			Banner printedBanner = printBanner(environment);
+			// 根据应用类型创建容器
 			context = createApplicationContext();
+			// 获取SpringBoot 异常报告器，如果启动异常会执行handleRunFailure方法，在方法里会执行所有异常报告器的reportException方法
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
 					new Class[]{ConfigurableApplicationContext.class}, context);
+			// 准备容器
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			// 刷新容器，这里就走到Spring刷新容器的过程了
 			refreshContext(context);
+			// 在刷新容器后调用，空实现，留给我们扩展
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
 			}
+			// 发布SpringBoot启动完成事件
 			listeners.started(context);
+			// 运行容器里的Runner（实现ApplicationRunner、CommandLineRunner接口的bean）
 			callRunners(context, applicationArguments);
 		} catch (Throwable ex) {
 			handleRunFailure(context, ex, exceptionReporters, listeners);
