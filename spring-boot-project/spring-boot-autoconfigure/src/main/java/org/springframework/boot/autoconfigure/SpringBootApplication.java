@@ -51,8 +51,15 @@ import org.springframework.data.repository.Repository;
 @Inherited
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
-		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+/**
+ * 扫描bean注解，没有指定扫描路径就扫描当前类的包路径
+ * {@link org.springframework.context.annotation.ConfigurationClassParser#doProcessConfigurationClass}
+ * 			处理带有@ComponentScan的bean
+ * {@link org.springframework.context.annotation.ComponentScanAnnotationParser#parse}
+ * 			解析注解后执行扫描bean
+ */
+@ComponentScan(excludeFilters = {@Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class)})
 public @interface SpringBootApplication {
 
 	/**

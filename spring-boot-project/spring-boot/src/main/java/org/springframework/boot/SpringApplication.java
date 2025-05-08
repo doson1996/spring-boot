@@ -343,6 +343,7 @@ public class SpringApplication {
 		}
 
 		try {
+			// 发布SpringBoot运行中事件
 			listeners.running(context);
 		} catch (Throwable ex) {
 			handleRunFailure(context, ex, exceptionReporters, null);
