@@ -1,10 +1,13 @@
 package com.ds.boot.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
+
+import com.ds.boot.service.AsyncService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author ds
@@ -15,11 +18,17 @@ import java.util.Map;
 @RequestMapping("test")
 public class TestController {
 
-	@RequestMapping("hello")
-	public Map<String, Object> hello() {
+	@Resource
+	private AsyncService asyncService;
+
+	@RequestMapping("async")
+	public Map<String, Object> async() {
 		Map<String, Object> result = new HashMap<>();
-		result.put("msg", "ok");
-		result.put("code", 200);
+		try {
+			result = asyncService.async().get();
+		} catch (Exception e) {
+			System.err.println("e = " + e);
+		}
 		return result;
 	}
 
