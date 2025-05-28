@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AsyncServiceImpl implements AsyncService {
 
-	@Async
+	@Async("executor")
 	@Override
 	public Future<Map<String, Object>> async() {
 		System.out.println("hello...");
