@@ -21,6 +21,11 @@ public class TestController {
 	@Resource
 	private AsyncService asyncService;
 
+	/**
+	 * http://localhost:8080/test/async
+	 *
+	 * @return
+	 */
 	@RequestMapping("async")
 	public Map<String, Object> async() {
 		Map<String, Object> result = new HashMap<>();
