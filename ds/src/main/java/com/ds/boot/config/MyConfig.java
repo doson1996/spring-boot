@@ -1,7 +1,7 @@
 package com.ds.boot.config;
 
-import com.ds.boot.controller.TestController;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import com.ds.boot.annotion.InjectionAnnotationBeanPostProcessor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -9,7 +9,12 @@ import org.springframework.context.annotation.Configuration;
  * @date 2025/4/22
  * @description
  */
-@ConditionalOnClass(TestController.class)
 @Configuration
 public class MyConfig {
+
+	@Bean
+	public InjectionAnnotationBeanPostProcessor injectionAnnotationBeanPostProcessor() {
+		return new InjectionAnnotationBeanPostProcessor();
+	}
+
 }
