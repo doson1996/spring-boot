@@ -1,9 +1,7 @@
 package com.ds.boot.annotion;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -12,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanCreationException;
@@ -20,10 +17,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
-import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -95,35 +90,12 @@ public class InjectionAnnotationBeanPostProcessor implements SmartInstantiationA
 			ReflectionUtils.doWithLocalFields(targetClass, field -> {
 				if (field.isAnnotationPresent(Injection.class)) {
 					if (Modifier.isStatic(field.getModifiers())) {
-						throw new IllegalStateException("@Resource annotation is not supported on static fields");
+						throw new IllegalStateException("@Injection annotation is not supported on static fields");
 					}
 
-					currElements.add(new InjectionFieldElement(field, true));
-
+					currElements.add(new InjectionFieldElement(field));
 				}
 			});
-
-//			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
-//				Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-//				if (!BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) {
-//					return;
-//				}
-//				if (method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
-//					if (bridgedMethod.isAnnotationPresent(Injection.class)) {
-//						if (Modifier.isStatic(method.getModifiers())) {
-//							throw new IllegalStateException("@Resource annotation is not supported on static methods");
-//						}
-//						Class<?>[] paramTypes = method.getParameterTypes();
-//						if (paramTypes.length != 1) {
-//							throw new IllegalStateException("@Resource annotation requires a single-arg method: " + method);
-//						}
-//
-//						PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, clazz);
-//						currElements.add(new InjectionFieldElement(method, bridgedMethod, pd));
-//
-//					}
-//				}
-//			});
 
 			elements.addAll(0, currElements);
 			targetClass = targetClass.getSuperclass();
@@ -135,7 +107,7 @@ public class InjectionAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	private class InjectionFieldElement extends InjectionMetadata.InjectedElement {
 
-		public InjectionFieldElement(Field field, boolean required) {
+		public InjectionFieldElement(Field field) {
 			super(field, null);
 		}
 
@@ -145,7 +117,7 @@ public class InjectionAnnotationBeanPostProcessor implements SmartInstantiationA
 			Object value;
 			String requiredBeanName = field.getName();
 			if (beanFactory.containsBean(requiredBeanName)) {
-				 value = beanFactory.getBean(requiredBeanName);
+				value = beanFactory.getBean(requiredBeanName);
 			} else {
 				value = beanFactory.getBean(field.getType());
 			}
