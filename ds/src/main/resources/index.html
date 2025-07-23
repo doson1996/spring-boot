@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Netty聊天室</title>
+    <style>        body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    #chatArea {
+        width: 100%;
+        height: 300px;
+        border: 1px solid #ccc;
+        overflow-y: scroll;
+        margin-bottom: 10px;
+        padding: 10px;
+        position: relative;
+    }
+    .message {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        max-width: 70%;
+        clear: both;
+        overflow-wrap: break-word;
+    }
+    .received {
+        background-color: #f0f0f0;
+        color: #000;
+        float: left;
+        clear: both;
+    }
+    .sent {
+        background-color: #dcf8c6;
+        color: #000;
+        float: right;
+        clear: both;
+    }
+    #messageInput {
+        width: 80%;
+        padding: 10px;
+    }
+    #sendButton {
+        width: 15%;
+        padding: 10px;
+    }
+    .private {
+        color: blue;
+        font-weight: bold;
+    }
+    .self {
+        color: green;
+        font-weight: bold;
+    }
+    #usernameModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+    #usernameForm {
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+<div id="usernameModal">
+    <div id="usernameForm">
+        <h3>请输入用户名</h3>
+        <input type="text" id="usernameInput" placeholder="输入用户名..." autofocus />
+        <button onclick="setUsername()">确定</button>
+    </div>
+</div>
+
+<h1>Netty聊天室</h1>
+<div id="chatArea"></div>
+<input type="text" id="messageInput" placeholder="输入消息... (私聊格式: @username 消息)" disabled />
+<button id="sendButton" onclick="sendMessage()" disabled>发送</button>
+
+<script>        let websocket;
+let username = "";
+let chatArea = document.getElementById("chatArea");
+let messageInput = document.getElementById("messageInput");
+let sendButton = document.getElementById("sendButton");
+
+function setUsername() {
+    let input = document.getElementById("usernameInput");
+    username = input.value.trim();
+
+    if (username !== "") {
+        document.getElementById("usernameModal").style.display = "none";
+
+        // 启用消息输入
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+
+        // 建立WebSocket连接
+        websocket = new WebSocket("ws://localhost:8090/chat");
+
+        websocket.onopen = function(event) {
+            // 发送用户名给服务器
+            websocket.send(JSON.stringify({ type: "username", username: username }));
+            chatArea.innerHTML += "<p>[系统] 连接成功!</p>";
+        };
+
+        websocket.onmessage = function(event) {
+            let message = event.data;
+
+            try {
+                // 尝试解析为JSON（可能是用户名设置消息）
+                let json = JSON.parse(message);
+
+                if (json.type === "username") {
+                    if (json.success) {
+                        chatArea.innerHTML += "<p>[系统] 欢迎 " + json.username + " 加入聊天室</p>";
+                    } else {
+                        chatArea.innerHTML += "<p>[系统] 用户名 " + json.username + " 已被占用，请重新输入</p>";
+                        document.getElementById("usernameModal").style.display = "block";
+                        messageInput.disabled = true;
+                        sendButton.disabled = true;
+                    }
+                    return;
+                }
+            } catch (e) {
+                // 不是JSON，继续处理普通消息
+            }
+
+            // 创建新的div元素
+            let messageElement = document.createElement("div");
+
+            // 如果是私聊消息
+            if (message.startsWith("[私聊]")) {
+                messageElement.className = "message private";
+            } else if (message.startsWith("[SERVER]")) {
+                // 系统消息
+                messageElement.className = "message";
+                messageElement.style.color = "gray";
+            } else {
+                // 判断是否是自己发送的消息
+                if (message.startsWith("[" + username + "]")) {
+                    messageElement.className = "message sent";
+                } else {
+                    messageElement.className = "message received";
+                }
+            }
+
+            // 添加消息内容
+            messageElement.innerHTML = message;
+
+            // 添加到聊天区域
+            chatArea.appendChild(messageElement);
+
+            // 滚动到底部
+            chatArea.scrollTop = chatArea.scrollHeight;
+        };
+
+        websocket.onclose = function(event) {
+            chatArea.innerHTML += "<p>[系统] 连接已断开</p>";
+        };
+
+        websocket.onerror = function(event) {
+            chatArea.innerHTML += "<p>[系统] 发生错误</p>";
+        };
+    } else {
+        alert("用户名不能为空！");
+    }
+}
+
+function sendMessage() {
+    if (messageInput.value.trim() !== "") {
+        websocket.send(JSON.stringify({
+            type: "message",
+            username: username,
+            content: messageInput.value
+        }));
+        messageInput.value = "";
+    }
+}
+
+messageInput.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+});
+</script>
+</body>
+</html>
