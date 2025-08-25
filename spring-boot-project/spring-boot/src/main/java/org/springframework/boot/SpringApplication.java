@@ -272,7 +272,7 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 推断应用类型 【决定创建容器的类型】
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		// 设置初始化器 【在刷新容器之前「prepareContext」执行，可以对当前容器进行操作，例如替换bean工厂，实现bean初始方式异步执行】
+		// 设置初始化器 【在刷新容器之前「prepareContext」执行，可以对当前容器进行操作，例如替换bean工厂，实现bean初始方法异步执行】
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
 		// 设置监听器
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
@@ -383,9 +383,12 @@ public class SpringApplication {
 
 	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
 								SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
+		// 把创建好的容器放到容器中
 		context.setEnvironment(environment);
 		postProcessApplicationContext(context);
+		// 遍历执行初始化器initialize方法
 		applyInitializers(context);
+		// 发布容器准备完成事件
 		listeners.contextPrepared(context);
 		if (this.logStartupInfo) {
 			logStartupInfo(context.getParent() == null);
@@ -409,6 +412,7 @@ public class SpringApplication {
 		Assert.notEmpty(sources, "Sources must not be empty");
 		// 在这里把启动类加载进容器
 		load(context, sources.toArray(new Object[0]));
+		// 发布容器已加载启动类事件
 		listeners.contextLoaded(context);
 	}
 
