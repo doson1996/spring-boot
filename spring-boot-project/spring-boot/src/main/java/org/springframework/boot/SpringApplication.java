@@ -386,7 +386,7 @@ public class SpringApplication {
 		// 把创建好的容器放到容器中
 		context.setEnvironment(environment);
 		postProcessApplicationContext(context);
-		// 遍历执行初始化器initialize方法
+		// 遍历执行初始化器initialize方法 【在这里可以替换容器，实现bean初始化异步执行】
 		applyInitializers(context);
 		// 发布容器准备完成事件
 		listeners.contextPrepared(context);
