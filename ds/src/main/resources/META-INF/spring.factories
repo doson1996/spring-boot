@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.ds.boot.config.MyConfig 
+com.ds.auto.MyConfig
