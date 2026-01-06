@@ -14,8 +14,30 @@ import org.springframework.stereotype.Component;
 public class MyTask {
 
 	@Scheduled(fixedRate = 5000)
-	public void print() {
-		System.out.println(LocalDateTime.now() + " " + Thread.currentThread().getName() + " | MyTask Print...");
+	public void print1() {
+		System.out.println(LocalDateTime.now() + " " + Thread.currentThread().getName() + " | MyTask Print1 Start...");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		System.out.println(LocalDateTime.now() + " " + Thread.currentThread().getName() + " | MyTask Print1 End...");
+	}
+
+	@Scheduled(fixedRate = 5000)
+	public void print2() {
+		System.out.println(LocalDateTime.now() + " " + Thread.currentThread().getName() + " | MyTask Print2 Start...");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		System.out.println(LocalDateTime.now() + " " + Thread.currentThread().getName() + " | MyTask Print2 End...");
+	}
+
+	@Scheduled(cron = "0 */1 * * * *")
+	public void cronPrint() {
+		System.out.println(LocalDateTime.now() + " " + Thread.currentThread().getName() + " | MyTask CronPrint...");
 	}
 
 }

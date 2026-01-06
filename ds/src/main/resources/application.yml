@@ -13,6 +13,12 @@ server:
     accept-count: 100
     # 连接超时时间（毫秒）
     connection-timeout: 20000
+spring:
+  task:
+    scheduling:
+      pool:
+        # 设置定时任务线程池大小
+        size: 3
 #  undertow:
 #    # I/O线程数，建议设置为CPU核心数
 #    io-threads: 6
