@@ -23,11 +23,11 @@ public class MyController {
 
 	@RequestMapping("save")
 	public Map<String, Object> save(String value) {
-
 		boolean res = myService.insert(value);
 		Map<String, Object> result = new HashMap<>();
 		result.put("msg", res);
 		result.put("code", 200);
 		return result;
 	}
+
 }
