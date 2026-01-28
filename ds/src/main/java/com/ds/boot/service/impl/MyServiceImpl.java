@@ -27,8 +27,8 @@ public class MyServiceImpl implements MyService {
 	public boolean insert(String value) {
 //		String sql = "insert into user values (" + value + ")";
 		String sql = "insert into user(name) values (?)";
-//		int update = jdbcTemplate.update(sql, value);
-		int insert = sqlSessionTemplate.insert(sql, value);
+		int insert = jdbcTemplate.update(sql, value);
+//		int insert = sqlSessionTemplate.insert(sql, value);
 		if ("ls".equals(value))
 			throw new RuntimeException("ls ex");
 		return insert > 0;

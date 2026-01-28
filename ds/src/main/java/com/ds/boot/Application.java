@@ -8,6 +8,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author ds
  * @date 2024/12/25
  * @description
+ * 		1.注册InfrastructureAdvisorAutoProxyCreator、ProxyTransactionManagementConfiguration @EnableTransactionManagement -> @Import(TransactionManagementConfigurationSelector.class) -> AutoProxyRegistrar[-> InfrastructureAdvisorAutoProxyCreator]、ProxyTransactionManagementConfiguration
+ *		2.
+ *		3.
+ *		4.
+ *		5.
+ *
  */
 @EnableTransactionManagement
 @SpringBootApplication
