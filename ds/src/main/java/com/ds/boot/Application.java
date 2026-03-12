@@ -1,7 +1,9 @@
 package com.ds.boot;
 
+import com.ds.boot.controller.MyController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -9,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @date 2024/12/25
  * @description
  * 		1.注册InfrastructureAdvisorAutoProxyCreator、ProxyTransactionManagementConfiguration @EnableTransactionManagement -> @Import(TransactionManagementConfigurationSelector.class) -> AutoProxyRegistrar[-> InfrastructureAdvisorAutoProxyCreator]、ProxyTransactionManagementConfiguration
- *		2.
+ *		2.在ProxyTransactionManagementConfiguration配置类中配置了TransactionInterceptor
  *		3.
  *		4.
  *		5.
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 public class Application {
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
+		MyController myController = context.getBean(MyController.class);
+		myController.save("ds");
 	}
 }
