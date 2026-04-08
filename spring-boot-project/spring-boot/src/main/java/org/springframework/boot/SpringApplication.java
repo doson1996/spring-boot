@@ -16,6 +16,20 @@
 
 package org.springframework.boot;
 
+import java.lang.reflect.Constructor;
+import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
@@ -67,20 +81,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.StandardServletEnvironment;
-
-import java.lang.reflect.Constructor;
-import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Class that can be used to bootstrap and launch a Spring application from a Java main
@@ -302,6 +302,7 @@ public class SpringApplication {
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
+		// 创建并启动StopWatch。就是个计时器，用来统计启动耗时。
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		ConfigurableApplicationContext context = null;
@@ -331,6 +332,7 @@ public class SpringApplication {
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
+				// 控制台看到的"Started Application in 10.347 seconds (JVM running for 12.844)"这里打印的。
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
 			}
 			// 发布SpringBoot启动完成事件
@@ -413,6 +415,7 @@ public class SpringApplication {
 		// 在这里把启动类加载进容器
 		load(context, sources.toArray(new Object[0]));
 		// 发布容器已加载启动类事件
+		// 把Spring监听器添加到容器里(EventPublishingRunListener#contextLoaded)
 		listeners.contextLoaded(context);
 	}
 
