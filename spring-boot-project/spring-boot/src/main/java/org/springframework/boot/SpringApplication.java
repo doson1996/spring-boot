@@ -269,15 +269,10 @@ public class SpringApplication {
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
-		// 设置主类 【在刷新容器之前「prepareContext」会load进beanDefinition】
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
-		// 推断应用类型 【决定创建容器的类型】
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		// 设置初始化器 【在刷新容器之前「prepareContext」执行，可以对当前容器进行操作，例如替换bean工厂，实现bean初始方式异步执行】
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
-		// 设置监听器
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		// 推断执行main方法是哪个类，后续打印日志使用
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
@@ -308,16 +303,12 @@ public class SpringApplication {
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty();
-		// 获取SpringBoot监听器，发布SpringBoot事件
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		// 发布SpringBoot开始启动时间
 		listeners.starting();
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-			// 准备环境
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
 			configureIgnoreBeanInfo(environment);
-			// 打印banner
 			Banner printedBanner = printBanner(environment);
 			context = createApplicationContext();
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
@@ -348,11 +339,9 @@ public class SpringApplication {
 	private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
 													   ApplicationArguments applicationArguments) {
 		// Create and configure the environment
-		// 根据应用类型创建环境
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
 		ConfigurationPropertySources.attach(environment);
-		// application.properties、application.yml都是在这一步读取的【ConfigFileApplicationListener】
 		listeners.environmentPrepared(environment);
 		bindToSpringApplication(environment);
 		if (!this.isCustomEnvironment) {
