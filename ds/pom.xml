@@ -23,6 +23,21 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.atlas</groupId>
+			<artifactId>atlasgraph-java-driver</artifactId>
+			<version>1.7.0.17x</version>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>Nexus-releases</id>
+			<url>https://mvn.stargraph.cn/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 
 </project>
