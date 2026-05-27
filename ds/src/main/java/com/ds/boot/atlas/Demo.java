@@ -21,6 +21,7 @@ import com.haizhi.atlasgraph.model.query.Node;
 import com.haizhi.atlasgraph.model.query.Operator;
 import com.haizhi.atlasgraph.model.query.graph.FullPathQuery;
 import com.haizhi.atlasgraph.model.query.graph.GraphQuery;
+import com.haizhi.atlasgraph.model.query.graph.NativeQuery;
 import com.haizhi.atlasgraph.model.query.property.EdgePropertyQuery;
 import com.haizhi.atlasgraph.model.query.property.VertexPropertyQuery;
 import com.haizhi.atlasgraph.model.result.graph.GraphPathResult;
@@ -81,6 +82,8 @@ public class Demo {
         System.out.println(fullPathQuery.queryString());
         GraphPathResult result = atlasGraphDatabase.graphQuery(fullPathQuery);
         System.out.println(JsonUtils.toJsonString(result));
+
+		GraphPathResult graphPathResult = atlasGraphDatabase.nativeQuery(new NativeQuery());
 
 	}
 }

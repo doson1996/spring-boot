@@ -28,6 +28,11 @@
 			<artifactId>atlasgraph-java-driver</artifactId>
 			<version>1.7.0.17x</version>
 		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>4.13.1</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -39,5 +44,22 @@
 			<url>https://mvn.stargraph.cn/nexus/content/repositories/releases/</url>
 		</repository>
 	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.13.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
