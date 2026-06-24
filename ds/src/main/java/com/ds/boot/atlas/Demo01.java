@@ -1,19 +1,15 @@
 package com.ds.boot.atlas;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
 
 import shaded.atlas.sdk.com.google.common.collect.Sets;
 
-import com.haizhi.atlasgraph.constant.FieldType;
-import com.haizhi.atlasgraph.model.query.FieldFilter;
-import com.haizhi.atlasgraph.model.query.LabelType;
 import com.haizhi.atlasgraph.model.query.Node;
-import com.haizhi.atlasgraph.model.query.Operator;
-import com.haizhi.atlasgraph.model.query.graph.FullPathQuery;
 import com.haizhi.atlasgraph.model.query.graph.GraphQuery;
 import com.haizhi.atlasgraph.model.query.graph.KExpandQuery;
+import com.haizhi.atlasgraph.model.query.graph.ShortestPathQuery;
 
 /**
  * @author ds
@@ -22,13 +18,13 @@ import com.haizhi.atlasgraph.model.query.graph.KExpandQuery;
  */
 public class Demo01 {
 	public static void main(String[] args) {
-//		Node start = new Node("Company", "object_key", "Company/A12327868DASDJ");
-		Node start = new Node("Person", "object_key", "Company/A12327868DASDJ");
+		Node start = new Node("Company", "object_key", "A12327868DASDJ");
+//		Node start = new Node("Person", "object_key", "Company/A12327868DASDJ");
 		KExpandQuery kExpandQuery = new KExpandQuery();
 		kExpandQuery.setStartVertices(Sets.newHashSet(start));
 		kExpandQuery.setVertexLabels(new HashSet<>(Arrays.asList("Company", "Person")));
 //		kExpandQuery.setVertexLabels(new HashSet<>(Arrays.asList("Person")));
-		kExpandQuery.setEdgeLabels(new HashSet<>(Arrays.asList("invest")));
+		kExpandQuery.setEdgeLabels(new HashSet<>(Arrays.asList("loan_pay")));
 		kExpandQuery.setMinDepth(1);
 		kExpandQuery.setMaxDepth(1);
 		kExpandQuery.setDirection(GraphQuery.DIRECTION_IN);
@@ -75,5 +71,16 @@ public class Demo01 {
 //        GraphPathResult result = atlasGraphDatabase.graphQuery(fullPathQuery);
 //        System.out.println(JsonUtils.toJsonString(result));
 
+		Node start1 = new Node("Company", "object_key", "2");
+		Node end1 = new Node("Company", "object_key", "1");
+		ShortestPathQuery shortestPathQuery = new ShortestPathQuery();
+		shortestPathQuery.setStartVertices(Sets.newHashSet(start1));
+		shortestPathQuery.setEndVertices(Sets.newHashSet(end1));
+		shortestPathQuery.setMaxDepth(3);
+		shortestPathQuery.setMinDepth(1);
+		shortestPathQuery.setDirection("IN");
+		shortestPathQuery.setEdgeLabels(Sets.newHashSet("invest"));
+		shortestPathQuery.setVertexLabels(Sets.newHashSet("Company"));
+		System.out.println(shortestPathQuery.queryString());
 	}
 }
