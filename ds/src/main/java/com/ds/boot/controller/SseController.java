@@ -30,7 +30,7 @@ public class SseController {
 	}
 
 	@GetMapping(path = "/send", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> connect(@RequestParam String userId, @RequestParam String message) {
+	public Map<String, Object> send(@RequestParam String userId, @RequestParam String message) {
 		Map<String, Object> result = new HashMap<>();
 		SSEManager.sendMessage(userId, message);
 		result.put("code", "ok");
